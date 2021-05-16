@@ -17,6 +17,7 @@ limitations under the License.
 package v2
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -25,21 +26,22 @@ import (
 
 // JupyterSpec defines the desired state of Jupyter
 type JupyterSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Template JupyterTemplate `json:",omitempty"`
+}
 
-	// Foo is an example field of Jupyter. Edit jupyter_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+type JupyterTemplate struct {
+	Spec corev1.PodSpec `json:",omitempty"`
 }
 
 // JupyterStatus defines the observed state of Jupyter
 type JupyterStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	ReadyReplicas  int32                 `json:",omitempty"`
+	ContainerState corev1.ContainerState `json:"state,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:path=jupyters,singular=jupyter,scope=Namespaced
 
 // Jupyter is the Schema for the jupyters API
 type Jupyter struct {
