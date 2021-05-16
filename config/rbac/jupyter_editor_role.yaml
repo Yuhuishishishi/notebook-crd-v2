@@ -1,0 +1,24 @@
+# permissions for end users to edit jupyters.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jupyter-editor-role
+rules:
+- apiGroups:
+  - operators.convect.ai
+  resources:
+  - jupyters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - operators.convect.ai
+  resources:
+  - jupyters/status
+  verbs:
+  - get

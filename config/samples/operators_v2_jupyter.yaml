@@ -1,0 +1,7 @@
+apiVersion: operators.convect.ai/v2
+kind: Jupyter
+metadata:
+  name: jupyter-sample
+spec:
+  # Add fields here
+  foo: bar

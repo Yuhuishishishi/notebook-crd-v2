@@ -1,0 +1,16 @@
+domain: convect.ai
+layout:
+- go.kubebuilder.io/v3
+projectName: notebook-crd-v2
+repo: convect.ai/notebook-crd
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: convect.ai
+  group: operators
+  kind: Jupyter
+  path: convect.ai/notebook-crd/api/v2
+  version: v2
+version: "3"
