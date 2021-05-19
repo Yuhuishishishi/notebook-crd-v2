@@ -132,6 +132,56 @@ func (r *JupyterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	// Update the status
+	// Update the ready replicas
+	if foundStateful.Status.ReadyReplicas != instance.Status.ReadyReplicas {
+		log.Info("Updateing Status", "namespace", instance.Namespace, "name", instance.Name)
+		instance.Status.ReadyReplicas = foundStateful.Status.ReadyReplicas
+		if err = r.Status().Update(ctx, instance); err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+
+	// Check the pod status
+	pod := &corev1.Pod{}
+
+	err = r.Get(ctx, types.NamespacedName{Name: ss.Name + "-0", Namespace: ss.Namespace}, pod)
+
+	if err != nil && apierrs.IsNotFound(err) {
+		log.Info("Pod not found")
+	} else if err != nil {
+		return ctrl.Result{}, err
+	} else {
+
+		// Update the CR state using the pod state with the same name
+		if len(pod.Status.ContainerStatuses) > 0 {
+			notebookContainerFound := false
+			for i := range pod.Status.ContainerStatuses {
+				if pod.Status.ContainerStatuses[i].Name != instance.Name {
+					continue
+				}
+
+				if pod.Status.ContainerStatuses[i].State == instance.Status.ContainerState {
+					continue // No need to update
+				}
+
+				log.Info("Updating Notebook CR state: ", "namespace", instance.Namespace, "name", instance.Name)
+				state := pod.Status.ContainerStatuses[i].State
+				instance.Status.ContainerState = state
+
+				err = r.Status().Update(ctx, instance)
+				if err != nil {
+					return ctrl.Result{}, err
+				}
+
+				notebookContainerFound = true
+				break
+			}
+
+			if !notebookContainerFound {
+				log.Error(nil, "Could not find the Notebook container, will not update the status of the CR. No container has the same name as the CR.", "CR name:", instance.Name)
+			}
+		}
+	}
 
 	return ctrl.Result{}, nil
 }
@@ -140,5 +190,7 @@ func (r *JupyterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 func (r *JupyterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&operatorsv2.Jupyter{}).
+		Owns(&appsv1.StatefulSet{}).
+		Owns(&corev1.Service{}).
 		Complete(r)
 }
