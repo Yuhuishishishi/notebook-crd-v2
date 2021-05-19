@@ -26,17 +26,17 @@ import (
 
 // JupyterSpec defines the desired state of Jupyter
 type JupyterSpec struct {
-	Template JupyterTemplate `json:",omitempty"`
+	Template JupyterTemplate `json:"template,omitempty"`
 }
 
 type JupyterTemplate struct {
-	Spec corev1.PodSpec `json:",omitempty"`
+	Spec corev1.PodSpec `json:"spec,omitempty"`
 }
 
 // JupyterStatus defines the observed state of Jupyter
 type JupyterStatus struct {
-	ReadyReplicas  int32                 `json:",omitempty"`
-	ContainerState corev1.ContainerState `json:"state,omitempty"`
+	ReadyReplicas  int32                 `json:"readyReplicas"`
+	ContainerState corev1.ContainerState `json:"containerState"`
 }
 
 //+kubebuilder:object:root=true
