@@ -28,7 +28,7 @@ func generateStatefulSet(instance *operatorsv2.Jupyter) *appsv1.StatefulSet {
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"statefuleset":  instance.Name,
+						"statefulset":   instance.Name,
 						"notebook-name": instance.Name,
 					},
 				},
