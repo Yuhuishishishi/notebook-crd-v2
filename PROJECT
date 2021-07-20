@@ -13,4 +13,13 @@ resources:
   kind: Jupyter
   path: convect.ai/notebook-crd/api/v2
   version: v2
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: convect.ai
+  group: operators
+  kind: Dask
+  path: convect.ai/notebook-crd/api/v2
+  version: v2
 version: "3"

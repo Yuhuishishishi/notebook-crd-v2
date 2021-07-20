@@ -86,6 +86,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Jupyter")
 		os.Exit(1)
 	}
+	if err = (&controllers.DaskReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Dask")
+		os.Exit(1)
+	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

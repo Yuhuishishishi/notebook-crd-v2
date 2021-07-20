@@ -1,0 +1,20 @@
+# permissions for end users to view dasks.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dask-viewer-role
+rules:
+- apiGroups:
+  - operators.convect.ai
+  resources:
+  - dasks
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - operators.convect.ai
+  resources:
+  - dasks/status
+  verbs:
+  - get
